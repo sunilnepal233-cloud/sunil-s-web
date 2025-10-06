@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Playful Yes-No Survey</title>
+  <style>
+    :root { --card-bg:#ffffff; --bg1:#f5f7fa; --bg2:#c3cfe2; }
+    *{box-sizing:border-box}
+    body{
+      font-family: system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial;
+      min-height:100vh;margin:0;
+      display:flex;align-items:center;justify-content:center;
+      background:linear-gradient(135deg,var(--bg1),var(--bg2));
+    }
+    .container{
+      width:clamp(320px,80vw,720px);
+      padding:28px;border-radius:14px;background:var(--card-bg);
+      text-align:center;box-shadow:0 10px 30px rgba(0,0,0,0.08);
+      position:relative;
+    }
+    h1{font-size:1.5rem;margin:0 0 18px;color:#111;}
+    .buttons{display:flex;gap:18px;justify-content:center;align-items:center;margin-top:8px;}
+    .btn{
+      padding:12px 20px;border-radius:10px;border:none;
+      font-size:1rem;cursor:pointer;
+      box-shadow:0 6px 18px rgba(0,0,0,0.06);
+    }
+    .yes{background:#28a745;color:white;}
+    .no{background:#e03131;color:white;position:relative;transition:transform .2s ease;}
+    .no.dance{animation:dance .7s ease;}
+    @keyframes dance {
+      0%{transform:rotate(0) translateY(0);}
+      25%{transform:rotate(-12deg) translateY(-6px);}
+      50%{transform:rotate(12deg) translateY(-2px);}
+      75%{transform:rotate(-8deg) translateY(-6px);}
+      100%{transform:rotate(0) translateY(0);}
+    }
+    .status{margin-top:16px;color:#333;font-size:0.95rem;min-height:1.2em;}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1 id="question">Loading...</h1>
+    <div class="buttons">
+      <button id="yesBtn" class="btn yes">Yes ✅</button>
+      <button id="noBtn" class="btn no">No ❌</button>
+    </div>
+    <p id="status" class="status"></p>
+  </div>
+
+  <script>
+    // 👇 You can edit these questions
+    const questions = [
+      "Do you love me ?",
+      "Think again 😭?",
+      "Please say yes 🤧?",
+      "Say yes ❤️?"
+    ];
+
+    let questionIndex = 0;
+    const questionEl = document.getElementById('question');
+    const yesBtn = document.getElementById('yesBtn');
+    const noBtn = document.getElementById('noBtn');
+    const statusEl = document.getElementById('status');
+
+    function showQuestion() {
+      if (questionIndex < questions.length) {
+        questionEl.textContent = questions[questionIndex];
+      } else {
+        questionEl.textContent = "I love you too.";
+        statusEl.textContent = "don't say 'No's 😅";
+        yesBtn.disabled = true;
+        noBtn.disabled = true;
+      }
+    }
+
+    function moveNo() {
+      const btnRect = noBtn.getBoundingClientRect();
+      const padding = 16;
+      const maxX = Math.max(0, window.innerWidth - btnRect.width - padding);
+      const maxY = Math.max(0, window.innerHeight - btnRect.height - padding);
+      const x = Math.floor(Math.random() * (maxX - padding + 1)) + padding;
+      const y = Math.floor(Math.random() * (maxY - padding + 1)) + padding;
+      noBtn.style.position = 'fixed';
+      noBtn.style.left = x + 'px';
+      noBtn.style.top = y + 'px';
+      noBtn.classList.add('dance');
+      setTimeout(() => noBtn.classList.remove('dance'), 700);
+    }
+
+    function nextQuestionAfterNo() {
+      questionIndex++;
+      showQuestion();
+    }
+
+    noBtn.addEventListener('mouseenter', () => {
+      moveNo();
+      nextQuestionAfterNo();
+    });
+
+    noBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      moveNo();
+      nextQuestionAfterNo();
+    });
+
+    yesBtn.addEventListener('click', () => {
+      yesBtn.disabled = true;
+      noBtn.disabled = true;
+      questionEl.textContent = "Thanks for saying Yes! 🎉";
+      statusEl.textContent = "Survey completed.";
+    });
+
+    showQuestion();
+  </script>
+</body>
+</html>
